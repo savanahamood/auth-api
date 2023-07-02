@@ -1,14 +1,8 @@
-"use strict";
-const Clothes = (sequelize, DataTypes) =>
-    sequelize.define("clothes", {
-        clothesType: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        clothesSize: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-    });
+'use strict';
+const clothesModel = (sequelize, DataTypes) => sequelize.define('Clothes', {
+  name: { type: DataTypes.STRING, required: true },
+  color: { type: DataTypes.STRING, required: true },
+  size: { type: DataTypes.STRING, required: true }
+});
 
-module.exports = Clothes;
+module.exports = clothesModel;
