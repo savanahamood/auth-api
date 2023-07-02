@@ -1,37 +1,34 @@
-class Collection {
-    constructor(model) {
-        this.model = model;
-    }
-    async add(obj) {
-        let newRecord = await this.model.create(obj);
-        return newRecord;
-    }
-    async read(data_id) {
-        let records = null;
-        if (data_id) {
-            records = await this.model.findOne({ where: { id: data_id } });
+'use strict';
 
-        } else {
-            records = await this.model.findAll();
-        }
-        return records;
+
+class DataCollection {
+
+  constructor(model) {
+    this.model = model;
+  }
+
+  get(id) {
+    if (id) {
+      return this.model.findOne({ id });
     }
-    async update(obj, data_id) {
-        let foundCustomer = await this.model.findOne({ where: { id: data_id } });
-        let updatedCustomer = await foundCustomer.update(obj);
-        return updatedCustomer;
+    else {
+      return this.model.findAll({});
     }
-    async delete(data_id) {
-        let record = await this.model.destroy({ where: { id: data_id } });
-        return record;
-    }
-    async readCustomerOrders(id,model) {
-        let record = await this.model.findOne({
-            where: {id },
-            include:model,
-        })
-        return record;
-    }
+  }
+
+  create(record) {
+    return this.model.create(record);
+  }
+
+  update(id, data) {
+    return this.model.findOne({ where: { id } })
+      .then(record => record.update(data));
+  }
+
+  delete(id) {
+    return this.model.destroy({ where: { id }});
+  }
+
 }
 
-module.exports = Collection;
+module.exports = DataCollection;

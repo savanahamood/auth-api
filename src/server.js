@@ -1,56 +1,62 @@
 'use strict';
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-
-//const basic = require('./auth/middleware/basicAuth');
-//const bearer = require('./auth/middleware/bearerAuth');
-//const acl = require('./auth/middleware/acl')
-//const bcrypt = require('bcrypt');
-//const users = require('./auth/models/users.model');
-const authRoutes = require('./auth/routes');
+require('dotenv').config();
 const app = express();
-app.use(express.json());
-const logger = require('./middleware/logger');
-
-app.use(logger);
 app.use(cors());
 app.use(morgan('dev'));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 const notFoundHandler = require('./error-handlers/404');
 const errorHandler = require('./error-handlers/500');
-const v1Routes = require('./routes/v1');
-const v2Routes = require('./routes/v2');
+const logger = require('./middleware/logger');
+const authRoutes = require('./auth/routes');
+const v1Routes = require('./routes/v1.js');
+const v2Routes = require('./routes/v2.js');
 
 app.use(authRoutes);
 app.use(v1Routes);
-app.use( v2Routes);
+app.use(v2Routes);
 
-app.get("/",(req,res)=>{
-    res.send("HELLO!")
-  })
-// function secretstuffHandler(req, res) {
-//     res.status(200).json({
-//         'message': 'can view this route',
-//         'user': req.user
-//     });
-// }
-// app.get('/img',bearer,acl('read'),imageHandler)
-// app.post('/img',bearer,acl('create'))
-// app.put('/img',bearer,acl('update'))
-// app.delete('/img',bearer,acl('delete'),imageDeleteHandler)
 
-// function imageHandler(req, res) {
-//     res.status(200).json('you have the access');
+app.get('/', welcomeHandler);
+function welcomeHandler(req, res) {
+    res.status(200).send('hi from home rout ');
+}
 
-// }
-// function imageDeleteHandler(req, res) {
-//     res.status(200).json('you have the access');
+app.use(logger);
+// app.use(notFoundHandler);
+// app.use(errorHandler);
+// app.use(authRoutes);
+// app.use(v1Routes);
+// app.use(v2Routes);
 
-// }
+
 app.use('*', notFoundHandler);
-app.use(errorHandler)
+app.use(errorHandler);
 
-module.exports = app;
+
+
+module.exports = {
+  server: app, 
+  start: port => {
+    if (!port) { throw new Error('Missing Port'); }
+    app.listen(port, () => console.log(`Listening on ${port}`));
+  },
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
